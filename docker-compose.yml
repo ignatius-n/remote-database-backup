@@ -1,0 +1,21 @@
+version: '2.1'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    image: app:latest
+    ports:
+      - 8080:80
+      - 8443:443
+    # volumes:
+    #   - .:/app
+    networks:
+      - app
+    env_file: .env
+  
+
+
+networks:
+  app:
+    driver: bridge
