@@ -36,9 +36,10 @@ class MySQLBackupRunner extends AbstractBackupRunner
         $path = storage_path().'/databases';
 
         // Construct the command to perform the backup
-        $command = 'mysqldump --user='.$options['username'].
+        $command = 'mariadb-dump --user='.$options['username'].
             ' --password='.$options['password'].
             ' --host='.$options['host'].
+            ' --skip-ssl'.
             ' '.$options['database'].
             '  | gzip > '.$path.'/'.$filename;
 

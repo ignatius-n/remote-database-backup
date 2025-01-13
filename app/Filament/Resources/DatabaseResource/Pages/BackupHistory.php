@@ -43,13 +43,13 @@ class BackupHistory extends ManageRelatedRecords
             ->columns([
                 Tables\Columns\TextColumn::make('filename'),
                 Tables\Columns\TextColumn::make('filesize')
-                    ->formatStateUsing(fn (int $state) => formatSizeUnits($state)),
+                    ->formatStateUsing(fn(int $state) => $this->formatSizeUnits($state)),
                 Tables\Columns\TextColumn::make('created_at'),
             ])
             ->actions([
                 Tables\Actions\Action::make('download')
                     ->label('Download')
-                    ->url(fn (\App\Models\BackupHistory $record) => url('/download/' . $record->filename))
+                    ->url(fn(\App\Models\BackupHistory $record) => url('/download/' . $record->filename))
                     ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make()
                     ->before(function (ModelsBackupHistory $record) {
@@ -75,5 +75,26 @@ class BackupHistory extends ManageRelatedRecords
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    function formatSizeUnits($bytes): string
+    {
+        if ($bytes >= 1099511627776) {
+            $bytes = number_format($bytes / 1099511627776, 2) . ' TB';
+        } elseif ($bytes >= 1073741824) {
+            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+        } elseif ($bytes >= 1048576) {
+            $bytes = number_format($bytes / 1048576, 2) . ' MB';
+        } elseif ($bytes >= 1024) {
+            $bytes = number_format($bytes / 1024, 2) . ' KB';
+        } elseif ($bytes > 1) {
+            $bytes = $bytes . ' bytes';
+        } elseif ($bytes == 1) {
+            $bytes = $bytes . ' byte';
+        } else {
+            $bytes = '0 bytes';
+        }
+
+        return $bytes;
     }
 }
